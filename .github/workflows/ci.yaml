@@ -1,0 +1,56 @@
+name: Ignition ros2 control CI
+
+on:
+  pull_request:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:20.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup colcon workspace
+      id: configure
+      run: |
+        export DEBIAN_FRONTEND=noninteractive
+        apt update -qq
+        apt install -qq -y lsb-release wget curl gnupg2
+        cd ..
+        mkdir -p /home/ros2_ws/src
+        cp -r ign_ros2_control /home/ros2_ws/src/
+        sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
+        wget https://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
+        sh -c 'echo "deb http://packages.ros.org/ros2/ubuntu `lsb_release -cs` main" > /etc/apt/sources.list.d/ros2-latest.list'
+        curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add -
+        IGN_DEPS="libignition-gazebo5-dev libignition-plugin-dev libignition-utils1-cli-dev"
+        apt-get update && apt-get upgrade -q -y
+        apt-get update && apt-get install -qq -y \
+          dirmngr \
+          gnupg2 \
+          lsb-release \
+          python3-colcon-ros \
+          python3-colcon-common-extensions \
+          python3-rosdep \
+          build-essential \
+          $IGN_DEPS
+        cd /home/ros2_ws/src/
+        rosdep init
+        rosdep update
+        rosdep install --from-paths ./ -i -y --rosdistro foxy \
+          --ignore-src --skip-keys "ignition-gazebo5"
+    - name: Build project
+      id: build
+      run: |
+        cd /home/ros2_ws/
+        . /opt/ros/foxy/local_setup.sh
+        colcon build --packages-up-to ignition_ros2_control_demos
+    - name: Run tests
+      id: test
+      run: |
+        cd /home/ros2_ws/
+        . /opt/ros/foxy/local_setup.sh
+        colcon test --event-handlers console_direct+ --packages-select ignition_ros2_control ignition_ros2_control_demos
+        colcon test-result

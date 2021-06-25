@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>ignition_ros2_control_demos</name>
+  <version>0.0.0</version>
+  <description>ignition_ros2_control_demos</description>
+
+  <maintainer email="ahcorde@osrfoundation.org">Alejandro Hernandez</maintainer>
+
+  <license>Apache License 2.0</license>
+
+  <url type="website">http://ros.org/wiki/gazebo_ros_control</url>
+  <url type="bugtracker">https://github.com/ros-simulation/gazebo_ros2_control/issues</url>
+  <url type="repository">https://github.com/ros-simulation/gazebo_ros2_control</url>
+
+  <author>Alejandro Hernández</author>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <build_depend>control_msgs</build_depend>
+  <build_depend>rclcpp</build_depend>
+  <build_depend>rclcpp_action</build_depend>
+  <build_depend>std_msgs</build_depend>
+
+  <exec_depend>ament_index_python</exec_depend>
+  <exec_depend>control_msgs</exec_depend>
+  <exec_depend>hardware_interface</exec_depend>
+  <exec_depend>ignition_ros2_control</exec_depend>
+  <exec_depend>joint_state_controller</exec_depend>
+  <exec_depend>joint_trajectory_controller</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+  <exec_depend>rclcpp</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>ros_ign_gazebo</exec_depend>
+  <exec_depend>ros2controlcli</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>velocity_controllers</exec_depend>
+  <exec_depend>xacro</exec_depend>
+
+  <test_depend>ament_cmake_gtest</test_depend>
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

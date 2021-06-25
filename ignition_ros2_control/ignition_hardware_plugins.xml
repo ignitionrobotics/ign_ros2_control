@@ -1,0 +1,10 @@
+<library path="ignition_hardware_plugins">
+  <class
+    name="ignition_ros2_control/IgnitionSystem"
+    type="ignition_ros2_control::IgnitionSystem"
+    base_class_type="ignition_ros2_control::IgnitionSystemInterface">
+    <description>
+      GazeboPositionJoint
+    </description>
+  </class>
+</library>

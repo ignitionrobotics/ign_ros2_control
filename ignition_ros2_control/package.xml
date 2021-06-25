@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>ignition_ros2_control</name>
+  <version>0.0.0</version>
+  <description>Ignition ROS2 control package. It allows to control joint using ROS 2</description>
+  <maintainer email="alejandro@openrobotics.com">Alejandro Hernández</maintainer>
+  <author>Alejandro Hernández</author>
+  <license>Apache 2</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>ament_index_cpp</depend>
+  <depend condition="$IGNITION_VERSION == cidadel">ignition-gazebo3</depend>
+  <depend condition="$IGNITION_VERSION == edifice">ignition-gazebo5</depend>
+  <depend>ignition-plugin</depend>
+  <depend>pluginlib</depend>
+  <depend>rclcpp</depend>
+  <depend>yaml_cpp_vendor</depend>
+  <depend>urdf</depend>
+  <depend>hardware_interface</depend>
+  <depend>controller_manager</depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+      <build_type>ament_cmake</build_type>
+      <ignition_ros2_control plugin="${prefix}/ignition_hardware_plugins.xml"/>
+  </export>
+</package>
