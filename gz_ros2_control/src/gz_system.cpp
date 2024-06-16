@@ -568,9 +568,9 @@ hardware_interface::return_type GazeboSimSystem::read(
     }
     // Calculate the scalar effort along the joint axis
     this->dataPtr->joints_[i].joint_effort = force_or_torque.dot(
-        gz::physics::Vector3d{this->dataPtr->joints_[i].joint_axis.Xyz()[0],
-          this->dataPtr->joints_[i].joint_axis.Xyz()[1],
-          this->dataPtr->joints_[i].joint_axis.Xyz()[2]});
+      gz::physics::Vector3d{this->dataPtr->joints_[i].joint_axis.Xyz()[0],
+        this->dataPtr->joints_[i].joint_axis.Xyz()[1],
+        this->dataPtr->joints_[i].joint_axis.Xyz()[2]});
   }
 
   for (unsigned int i = 0; i < this->dataPtr->imus_.size(); ++i) {
