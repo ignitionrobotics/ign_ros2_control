@@ -23,6 +23,7 @@
 #include <utility>
 #include <vector>
 
+<<<<<<< HEAD:ign_ros2_control/src/ign_system.cpp
 #include <ignition/gazebo/components/AngularVelocity.hh>
 #include <ignition/gazebo/components/Imu.hh>
 #include <ignition/gazebo/components/JointForce.hh>
@@ -40,6 +41,28 @@
 
 #include <ignition/transport/Node.hh>
 
+=======
+#include <gz/physics/Geometry.hh>
+#include <gz/sim/components/AngularVelocity.hh>
+#include <gz/sim/components/Imu.hh>
+#include <gz/sim/components/JointAxis.hh>
+#include <gz/sim/components/JointForceCmd.hh>
+#include <gz/sim/components/JointPosition.hh>
+#include <gz/sim/components/JointPositionReset.hh>
+#include <gz/sim/components/JointTransmittedWrench.hh>
+#include <gz/sim/components/JointType.hh>
+#include <gz/sim/components/JointVelocityCmd.hh>
+#include <gz/sim/components/JointVelocity.hh>
+#include <gz/sim/components/JointVelocityReset.hh>
+#include <gz/sim/components/LinearAcceleration.hh>
+#include <gz/sim/components/Name.hh>
+#include <gz/sim/components/ParentEntity.hh>
+#include <gz/sim/components/Pose.hh>
+#include <gz/sim/components/Sensor.hh>
+#include <gz/transport/Node.hh>
+#define GZ_TRANSPORT_NAMESPACE gz::transport::
+#define GZ_MSGS_NAMESPACE gz::msgs::
+>>>>>>> cc66e73 (use gz-physics#283 to implement joint_states/effort feedback (#186)):gz_ros2_control/src/gz_system.cpp
 
 #include <hardware_interface/hardware_info.hpp>
 
@@ -47,6 +70,12 @@ struct jointData
 {
   /// \brief Joint's names.
   std::string name;
+
+  /// \brief Joint's type.
+  sdf::JointType joint_type;
+
+  /// \brief Joint's axis.
+  sdf::JointAxis joint_axis;
 
   /// \brief Current joint position
   double joint_position;
@@ -214,6 +243,10 @@ bool IgnitionSystem::initSim(
 
     ignition::gazebo::Entity simjoint = enableJoints[joint_name];
     this->dataPtr->joints_[j].sim_joint = simjoint;
+    this->dataPtr->joints_[j].joint_type = _ecm.Component<sim::components::JointType>(
+      simjoint)->Data();
+    this->dataPtr->joints_[j].joint_axis = _ecm.Component<sim::components::JointAxis>(
+      simjoint)->Data();
 
     // Create joint position component if one doesn't exist
     if (!_ecm.EntityHasComponentType(
@@ -231,12 +264,18 @@ bool IgnitionSystem::initSim(
       _ecm.CreateComponent(simjoint, ignition::gazebo::components::JointVelocity());
     }
 
-    // Create joint force component if one doesn't exist
+    // Create joint transmitted wrench component if one doesn't exist
     if (!_ecm.EntityHasComponentType(
         simjoint,
+<<<<<<< HEAD:ign_ros2_control/src/ign_system.cpp
         ignition::gazebo::components::JointForce().TypeId()))
     {
       _ecm.CreateComponent(simjoint, ignition::gazebo::components::JointForce());
+=======
+        sim::components::JointTransmittedWrench().TypeId()))
+    {
+      _ecm.CreateComponent(simjoint, sim::components::JointTransmittedWrench());
+>>>>>>> cc66e73 (use gz-physics#283 to implement joint_states/effort feedback (#186)):gz_ros2_control/src/gz_system.cpp
     }
 
     // Accept this joint and continue configuration
@@ -538,11 +577,18 @@ hardware_interface::return_type IgnitionSystem::read(
       this->dataPtr->ecm->Component<ignition::gazebo::components::JointVelocity>(
       this->dataPtr->joints_[i].sim_joint);
 
+<<<<<<< HEAD:ign_ros2_control/src/ign_system.cpp
     // TODO(ahcorde): Revisit this part ignitionrobotics/ign-physics#124
     // Get the joint force
     // const auto * jointForce =
     //   _ecm.Component<ignition::gazebo::components::JointForce>(
     //   this->dataPtr->sim_joints_[j]);
+=======
+    // Get the joint force via joint transmitted wrench
+    const auto * jointWrench =
+      this->dataPtr->ecm->Component<sim::components::JointTransmittedWrench>(
+      this->dataPtr->joints_[i].sim_joint);
+>>>>>>> cc66e73 (use gz-physics#283 to implement joint_states/effort feedback (#186)):gz_ros2_control/src/gz_system.cpp
 
     // Get the joint position
     const auto * jointPositions =
@@ -551,7 +597,19 @@ hardware_interface::return_type IgnitionSystem::read(
 
     this->dataPtr->joints_[i].joint_position = jointPositions->Data()[0];
     this->dataPtr->joints_[i].joint_velocity = jointVelocity->Data()[0];
-    // this->dataPtr->joint_effort_[j] = jointForce->Data()[0];
+    gz::physics::Vector3d force_or_torque;
+    if (this->dataPtr->joints_[i].joint_type == sdf::JointType::PRISMATIC) {
+      force_or_torque = {jointWrench->Data().force().x(),
+        jointWrench->Data().force().y(), jointWrench->Data().force().z()};
+    } else {  // REVOLUTE and CONTINUOUS
+      force_or_torque = {jointWrench->Data().torque().x(),
+        jointWrench->Data().torque().y(), jointWrench->Data().torque().z()};
+    }
+    // Calculate the scalar effort along the joint axis
+    this->dataPtr->joints_[i].joint_effort = force_or_torque.dot(
+      gz::physics::Vector3d{this->dataPtr->joints_[i].joint_axis.Xyz()[0],
+        this->dataPtr->joints_[i].joint_axis.Xyz()[1],
+        this->dataPtr->joints_[i].joint_axis.Xyz()[2]});
   }
 
   for (unsigned int i = 0; i < this->dataPtr->imus_.size(); ++i) {
