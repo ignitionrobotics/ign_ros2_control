@@ -65,7 +65,8 @@ def generate_launch_description():
     joint_state_broadcaster_spawner = Node(
         package='controller_manager',
         executable='spawner',
-        arguments=['joint_state_broadcaster'],
+        arguments=['joint_state_broadcaster',
+                   ],
     )
     joint_trajectory_controller_spawner = Node(
         package='controller_manager',
@@ -75,6 +76,14 @@ def generate_launch_description():
             '--param-file',
             robot_controllers,
             ],
+    )
+
+    # Bridge
+    bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
+        output='screen'
     )
 
     return LaunchDescription([
@@ -97,6 +106,7 @@ def generate_launch_description():
                 on_exit=[joint_trajectory_controller_spawner],
             )
         ),
+        bridge,
         node_robot_state_publisher,
         gz_spawn_entity,
         # Launch Arguments
