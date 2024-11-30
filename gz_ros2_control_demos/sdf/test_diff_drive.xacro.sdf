@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<sdf version="1.8">
+<sdf version="1.8" xmlns:xacro="http://www.ros.org/wiki/xacro">
   <model name="diff_drive" canonical_link="base_link">
     <link name="base_link">
       <must_be_base_link>true</must_be_base_link>
