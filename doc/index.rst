@@ -129,6 +129,7 @@ extensible via an additional plugin architecture to allow power users to create 
 robot hardware interfaces between *ros2_control* and Gazebo.
 
 URDF:
+
 .. code-block:: xml
 
   <gazebo>
@@ -136,7 +137,9 @@ URDF:
       <parameters>$(find gz_ros2_control_demos)/config/cart_controller.yaml</parameters>
     </plugin>
   </gazebo>
+
 SDF:
+
 .. code-block:: xml
 
   <plugin filename="libgz_ros2_control-system.so" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
@@ -165,6 +168,7 @@ or via ROS parameters:
 Additionally, one can specify a namespace and remapping rules, which will be forwarded to the controller_manager and loaded controllers. Add the following ``<ros>`` section:
 
 URDF:
+
 .. code-block:: xml
 
   <gazebo>
@@ -176,8 +180,11 @@ URDF:
       </ros>
     </plugin>
   </gazebo>
+
 SDF:
+
 .. code-block:: xml
+
 
   <plugin filename="libgz_ros2_control-system.so" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
     ...
@@ -210,6 +217,7 @@ The respective GazeboSimSystemInterface sub-class is specified in a URDF or SDF 
 robot model is loaded. For example, the following XML will load the default plugin:
 
 URDF:
+
 .. code-block:: xml
 
   <ros2_control name="GazeboSimSystem" type="system">
@@ -223,7 +231,9 @@ URDF:
       ...
     </plugin>
   </gazebo>
+
 SDF:
+
 .. code-block:: xml
 
   <ros2_control name="GazeboSimSystem" type="system">
@@ -243,6 +253,7 @@ Use the tag ``<parameters>`` inside ``<plugin>`` to set the YAML file with the c
 and use the tag ``<controller_manager_prefix_node_name>`` to set the controller manager node name.
 
 URDF:
+
 .. code-block:: xml
 
   <gazebo>
@@ -250,8 +261,10 @@ URDF:
       <parameters>$(find gz_ros2_control_demos)/config/cart_controller.yaml</parameters>
       <controller_manager_prefix_node_name>controller_manager</controller_manager_prefix_node_name>
     </plugin>
-  <gazebo>
+    <gazebo>
+
 SDF:
+
 .. code-block:: xml
 
   <plugin name="gz_ros2_control::GazeboSimROS2ControlPlugin" filename="libgz_ros2_control-system">
@@ -275,7 +288,7 @@ There are some examples in the *gz_ros2_control_demos* package.
 To specify whether to use URDF or SDF, you can launch the demo in the following way (the default is URDF):
 .. code-block:: shell
 
-  ros2 launch gz_ros2_control_demos ....launch.py description_format:=sdf
+  ros2 launch gz_ros2_control_demos <launch file> description_format:=sdf
 
 Cart on rail
 -----------------------------------------------------------
