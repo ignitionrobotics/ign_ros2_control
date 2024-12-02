@@ -101,8 +101,17 @@ def generate_test_description():
             ],
     )
 
+    # Bridge
+    bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
+        output='screen'
+    )
+
     ld = launch.LaunchDescription([
         included_launch,
+        bridge,
         gz_spawn_entity,
         node_robot_state_publisher,
         RegisterEventHandler(
