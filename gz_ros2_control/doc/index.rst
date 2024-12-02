@@ -1,5 +1,10 @@
 :github_url: https://github.com/ros-controls/gz_ros2_control/blob/{REPOS_FILE_BRANCH}/doc/index.rst
 
+.. toctree::
+   :maxdepth: 2
+
+   C++ API Docs <generated/index>
+
 .. _gz_ros2_control:
 
 =====================
