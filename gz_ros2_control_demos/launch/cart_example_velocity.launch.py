@@ -1,4 +1,4 @@
-# Copyright 2024 ros2_control Development Team
+# Copyright 2021 Open Source Robotics Foundation, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.actions import RegisterEventHandler
 from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -30,15 +30,22 @@ def generate_launch_description():
     # Get URDF via xacro
     robot_description_content = Command(
         [
-            PathJoinSubstitution([FindExecutable(name="xacro")]),
-            " ",
+            PathJoinSubstitution([FindExecutable(name='xacro')]),
+            ' ',
             PathJoinSubstitution(
-                [FindPackageShare("ign_ros2_control_demos"),
-                 "urdf", "test_pendulum_effort.xacro.urdf"]
+                [FindPackageShare('gz_ros2_control_demos'),
+                 'urdf', 'test_cart_velocity.xacro.urdf']
             ),
         ]
     )
-    robot_description = {"robot_description": robot_description_content}
+    robot_description = {'robot_description': robot_description_content}
+    robot_controllers = PathJoinSubstitution(
+        [
+            FindPackageShare('gz_ros2_control_demos'),
+            'config',
+            'cart_controller_velocity.yaml',
+        ]
+    )
 
     node_robot_state_publisher = Node(
         package='robot_state_publisher',
@@ -51,20 +58,32 @@ def generate_launch_description():
         package='ros_gz_sim',
         executable='create',
         output='screen',
-        arguments=["-topic", "robot_description",
-                   "-name", "cart", "-allow_renaming", "true"],
+        arguments=['-topic', 'robot_description',
+                   '-name', 'cart', '-allow_renaming', 'true'],
     )
 
-    load_joint_state_broadcaster = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
-             'joint_state_broadcaster'],
-        output='screen'
+    joint_state_broadcaster_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=['joint_state_broadcaster'],
     )
-
-    load_joint_effort_controller = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller',
-             '--set-state', 'active', 'effort_controller'],
-        output='screen'
+    velocity_controller_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=[
+            'velocity_controller',
+            '--param-file',
+            robot_controllers,
+            ],
+    )
+    imu_sensor_broadcaster_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=[
+            'imu_sensor_broadcaster',
+            '--param-file',
+            robot_controllers,
+            ],
     )
 
     # Bridge
@@ -86,13 +105,14 @@ def generate_launch_description():
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=gz_spawn_entity,
-                on_exit=[load_joint_state_broadcaster],
+                on_exit=[joint_state_broadcaster_spawner],
             )
         ),
         RegisterEventHandler(
             event_handler=OnProcessExit(
-                target_action=load_joint_state_broadcaster,
-                on_exit=[load_joint_effort_controller],
+                target_action=joint_state_broadcaster_spawner,
+                on_exit=[velocity_controller_spawner,
+                         imu_sensor_broadcaster_spawner],
             )
         ),
         bridge,
