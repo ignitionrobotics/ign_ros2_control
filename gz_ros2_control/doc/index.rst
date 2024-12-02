@@ -3,7 +3,7 @@
 .. toctree::
    :maxdepth: 2
 
-   C++ API Docs <generated/index>
+   cpp_api_docs
 
 .. _gz_ros2_control:
 
