@@ -75,6 +75,14 @@ def generate_launch_description():
         output='screen'
     )
 
+    # Bridge
+    bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/clock@rosgraph_msgs/msg/Clock[ignition.msgs.Clock'],
+        output='screen'
+    )
+
     return LaunchDescription([
         # Launch gazebo environment
         IncludeLaunchDescription(
@@ -101,4 +109,5 @@ def generate_launch_description():
             'use_sim_time',
             default_value=use_sim_time,
             description='If true, use simulated clock'),
+        bridge,
     ])

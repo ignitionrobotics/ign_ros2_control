@@ -75,14 +75,6 @@ def generate_launch_description():
         output='screen'
     )
 
-    # Bridge
-    bridge = Node(
-        package='ros_gz_bridge',
-        executable='parameter_bridge',
-        arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
-        output='screen'
-    )
-
     return LaunchDescription([
         bridge,
         # Launch gazebo environment
