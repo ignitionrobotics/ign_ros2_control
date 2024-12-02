@@ -80,6 +80,14 @@ def generate_launch_description():
             robot_controllers,
             ],
     )
+ 
+    # Bridge
+    bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
+        output='screen'
+    )
 
     ld = LaunchDescription([
         # Launch gazebo environment
@@ -101,6 +109,7 @@ def generate_launch_description():
                 on_exit=[diff_drive_base_controller_spawner],
             )
         ),
+        bridge,
         gz_spawn_entity,
         # Launch Arguments
         DeclareLaunchArgument(
