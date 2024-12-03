@@ -34,11 +34,11 @@ def generate_launch_description():
             [
                 PathJoinSubstitution([FindExecutable(name='xacro')]),
                 ' ',
-                PathJoinSubstitution(
-                    [FindPackageShare('gz_ros2_control_demos'),
+                PathJoinSubstitution([
+                    FindPackageShare('gz_ros2_control_demos'),
                     performed_description_format,
-                    f'test_ackermann_drive.xacro.{performed_description_format}']
-                ),
+                    f'test_ackermann_drive.xacro.{performed_description_format}'
+                ]),
             ]
         )
         robot_description = {'robot_description': robot_description_content}
@@ -88,7 +88,7 @@ def generate_launch_description():
         output='screen'
     )
 
-    ld =  LaunchDescription([
+    ld = LaunchDescription([
         bridge,
         # Launch gazebo environment
         IncludeLaunchDescription(

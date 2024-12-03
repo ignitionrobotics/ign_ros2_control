@@ -261,7 +261,7 @@ URDF:
       <parameters>$(find gz_ros2_control_demos)/config/cart_controller.yaml</parameters>
       <controller_manager_prefix_node_name>controller_manager</controller_manager_prefix_node_name>
     </plugin>
-    <gazebo>
+  <gazebo>
 
 SDF:
 
