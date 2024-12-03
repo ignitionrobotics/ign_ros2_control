@@ -654,7 +654,7 @@ hardware_interface::return_type GazeboSimSystem::write(
       {
         this->dataPtr->ecm->CreateComponent(
           this->dataPtr->joints_[i].sim_joint,
-          sim::components::JointVelocityCmd({0}));
+          sim::components::JointVelocityCmd({this->dataPtr->joints_[i].joint_velocity_cmd}));
       } else {
         const auto jointVelCmd =
           this->dataPtr->ecm->Component<sim::components::JointVelocityCmd>(
