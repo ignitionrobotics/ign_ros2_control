@@ -44,6 +44,7 @@
   <exec_depend>imu_sensor_broadcaster</exec_depend>
   <exec_depend>joint_state_broadcaster</exec_depend>
   <exec_depend>joint_trajectory_controller</exec_depend>
+  <exec_depend>mecanum_drive_controller</exec_depend>
   <exec_depend>ros2controlcli</exec_depend>
   <exec_depend>tricycle_controller</exec_depend>
   <exec_depend>velocity_controllers</exec_depend>
