@@ -1,0 +1,364 @@
+<?xml version="1.0" ?>
+<sdf version="1.8" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <model name='ackermann_drive' canonical_link="base_link">
+    <link name="base_link">
+      <must_be_base_link>true</must_be_base_link>
+    </link>
+
+    <!-- Chassis -->
+    <link name="chassis">
+      <pose relative_to="chassis_joint"/>
+
+      <collision name="chassis_collision">
+        <geometry>
+          <box><size>
+            2 1 0.5
+          </size></box>
+        </geometry>
+      </collision>
+
+      <visual name="chassis_visual">
+        <geometry>
+          <box><size>
+            2 1 0.5
+          </size></box>
+        </geometry>
+        <material>
+          <ambient>1 0.5088 0.0468 1</ambient>
+          <diffuse>1 0.5088 0.0468 1</diffuse>
+        </material>
+      </visual>
+
+      <inertial>
+        <mass>1</mass>
+        <inertia>
+          <ixx>0.126164</ixx>
+          <ixy>0.0</ixy>
+          <ixz>0.0</ixz>
+          <iyy>0.416519</iyy>
+          <iyz>0.0</iyz>
+          <izz>0.481014</izz>
+        </inertia>
+      </inertial>
+    </link>
+
+    <joint name="chassis_joint" type="fixed">
+      <parent>base_link</parent>
+      <child>chassis</child>
+      <pose relative_to="base_link">0.8 0 0.5 0 0 0</pose>
+    </joint>
+
+  <!-- rear left wheel Link -->
+    <link name="rear_left_wheel">
+      <pose relative_to="rear_left_wheel_joint"/>
+
+      <collision name="rear_left_wheel_collision">
+        <geometry>
+          <cylinder>
+            <radius>0.3</radius>
+            <length>0.08</length>
+          </cylinder>
+        </geometry>
+      </collision>
+
+      <visual name="rear_left_wheel_visual">
+        <geometry>
+          <cylinder>
+            <radius>0.3</radius>
+            <length>0.08</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0 0 0 1</ambient>
+          <diffuse>0 0 0 1</diffuse>
+        </material>
+      </visual>
+
+      <inertial>
+        <mass>2</mass>
+        <inertia>
+          <ixx>0.145833</ixx>
+          <ixy>0.0</ixy>
+          <ixz>0.0</ixz>
+          <iyy>0.145833</iyy>
+          <iyz>0.0</iyz>
+          <izz>0.125</izz>
+        </inertia>
+      </inertial>
+    </link>
+
+    <joint name="rear_left_wheel_joint" type="revolute">
+      <parent>chassis</parent>
+      <child>rear_left_wheel</child>
+      <pose relative_to="chassis">-0.8 0.5 -0.2 -1.57 0 0</pose>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-inf</lower>
+          <upper>inf</upper>
+        </limit>
+        <dynamics>
+          <damping>0.2</damping>
+        </dynamics>
+      </axis>
+    </joint>
+
+  <!-- rear right wheel Link -->
+    <link name="rear_right_wheel">
+      <pose relative_to="rear_right_wheel_joint"/>
+
+      <collision name="rear_right_wheel_collision">
+        <geometry>
+          <cylinder>
+            <radius>0.3</radius>
+            <length>0.08</length>
+          </cylinder>
+        </geometry>
+      </collision>
+
+      <visual name="rear_right_wheel_visual">
+        <geometry>
+          <cylinder>
+            <radius>0.3</radius>
+            <length>0.08</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0 0 0 1</ambient>
+          <diffuse>0 0 0 1</diffuse>
+        </material>
+      </visual>
+
+      <inertial>
+        <mass>2</mass>
+        <inertia>
+          <ixx>0.145833</ixx>
+          <ixy>0.0</ixy>
+          <ixz>0.0</ixz>
+          <iyy>0.145833</iyy>
+          <iyz>0.0</iyz>
+          <izz>0.125</izz>
+        </inertia>
+      </inertial>
+    </link>
+
+    <joint name="rear_right_wheel_joint" type="revolute">
+      <parent>chassis</parent>
+      <child>rear_right_wheel</child>
+      <pose relative_to="chassis">-0.8 -0.5 -0.2 -1.57 0 0</pose>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-inf</lower>
+          <upper>inf</upper>
+        </limit>
+        <dynamics>
+          <damping>0.2</damping>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <!-- left steer Link -->
+    <link name="left_wheel_steering">
+      <pose relative_to="left_wheel_steering_joint"/>
+      <inertial>
+        <mass>0.1</mass>
+        <inertia>
+          <ixx>0.0</ixx>
+          <ixy>0.0</ixy>
+          <ixz>0.0</ixz>
+          <iyy>0.0</iyy>
+          <iyz>0.0</iyz>
+          <izz>0.0</izz>
+        </inertia>
+      </inertial>
+    </link>
+
+    <joint name="left_wheel_steering_joint" type="revolute">
+      <parent>chassis</parent>
+      <child>left_wheel_steering</child>
+      <pose relative_to="chassis">0.9 0.5 -0.2 -1.57 0 0</pose>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-inf</lower>
+          <upper>inf</upper>
+        </limit>
+        <dynamics>
+          <damping>0.2</damping>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <!-- right steer Link -->
+    <link name="right_wheel_steering">
+      <pose relative_to="right_wheel_steering_joint"/>
+      <inertial>
+        <mass>0.1</mass>
+        <inertia>
+          <ixx>0.0</ixx>
+          <ixy>0.0</ixy>
+          <ixz>0.0</ixz>
+          <iyy>0.0</iyy>
+          <iyz>0.0</iyz>
+          <izz>0.0</izz>
+        </inertia>
+      </inertial>
+    </link>
+
+    <joint name="right_wheel_steering_joint" type="revolute">
+      <parent>chassis</parent>
+      <child>right_wheel_steering</child>
+      <pose relative_to="chassis">0.9 -0.5 -0.2 -1.57 0 0</pose>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-inf</lower>
+          <upper>inf</upper>
+        </limit>
+        <dynamics>
+          <damping>0.2</damping>
+        </dynamics>
+      </axis>
+    </joint>
+
+  <!-- front left wheel Link -->
+    <link name="front_left_wheel">
+      <pose relative_to="front_left_wheel_joint"/>
+
+      <collision name="front_left_wheel_collision">
+        <geometry>
+          <cylinder>
+            <radius>0.3</radius>
+            <length>0.08</length>
+          </cylinder>
+        </geometry>
+      </collision>
+
+      <visual name="front_left_wheel_visual">
+        <geometry>
+          <cylinder>
+            <radius>0.3</radius>
+            <length>0.08</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0 0 0 1</ambient>
+          <diffuse>0 0 0 1</diffuse>
+        </material>
+      </visual>
+
+      <inertial>
+        <mass>2</mass>
+        <inertia>
+          <ixx>0.145833</ixx>
+          <ixy>0.0</ixy>
+          <ixz>0.0</ixz>
+          <iyy>0.145833</iyy>
+          <iyz>0.0</iyz>
+          <izz>0.125</izz>
+        </inertia>
+      </inertial>
+    </link>
+
+    <joint name="front_left_wheel_joint" type="revolute">
+      <parent>left_wheel_steering</parent>
+      <child>front_left_wheel</child>
+      <pose relative_to="left_wheel_steering">0 0 0 0 0 0</pose>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-inf</lower>
+          <upper>inf</upper>
+        </limit>
+        <dynamics>
+          <damping>0.2</damping>
+        </dynamics>
+      </axis>
+    </joint>
+
+  <!-- front right wheel Link -->
+    <link name="front_right_wheel">
+      <pose relative_to="front_right_wheel_joint"/>
+
+      <collision name="front_right_wheel_collision">
+        <geometry>
+          <cylinder>
+            <radius>0.3</radius>
+            <length>0.08</length>
+          </cylinder>
+        </geometry>
+      </collision>
+
+      <visual name="front_right_wheel_visual">
+        <geometry>
+          <cylinder>
+            <radius>0.3</radius>
+            <length>0.08</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0 0 0 1</ambient>
+          <diffuse>0 0 0 1</diffuse>
+        </material>
+      </visual>
+
+      <inertial>
+        <mass>2</mass>
+        <inertia>
+          <ixx>0.145833</ixx>
+          <ixy>0.0</ixy>
+          <ixz>0.0</ixz>
+          <iyy>0.145833</iyy>
+          <iyz>0.0</iyz>
+          <izz>0.125</izz>
+        </inertia>
+      </inertial>
+    </link>
+
+    <joint name="front_right_wheel_joint" type="revolute">
+      <parent>right_wheel_steering</parent>
+      <child>front_right_wheel</child>
+      <pose relative_to="right_wheel_steering">0 0 0 0 0 0</pose>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-inf</lower>
+          <upper>inf</upper>
+        </limit>
+        <dynamics>
+          <damping>0.2</damping>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <ros2_control name="GazeboSystem" type="system">
+      <hardware>
+        <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+      </hardware>
+      <joint name="rear_left_wheel_joint">
+        <command_interface name="velocity" />
+        <state_interface name="velocity" />
+        <state_interface name="position" />
+      </joint>
+      <joint name="rear_right_wheel_joint">
+        <command_interface name="velocity" />
+        <state_interface name="velocity" />
+        <state_interface name="position" />
+      </joint>
+      <joint name="left_wheel_steering_joint">
+        <command_interface name="position" />
+        <state_interface name="position" />
+      </joint>
+      <joint name="right_wheel_steering_joint">
+        <command_interface name="position" />
+        <state_interface name="position" />
+      </joint>
+    </ros2_control>
+
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(find gz_ros2_control_demos)/config/ackermann_drive_controller.yaml</parameters>
+    </plugin>
+
+  </model>
+</sdf>
