@@ -11,14 +11,6 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-<<<<<<< HEAD
-=======
-  - package-ecosystem: "github-actions"
-    # Workflow files stored in the
-    # default location of `.github/workflows`
-    directory: "/"
-    schedule:
-      interval: "weekly"
     target-branch: "humble"
   - package-ecosystem: "github-actions"
     # Workflow files stored in the
@@ -27,4 +19,3 @@ updates:
     schedule:
       interval: "weekly"
     target-branch: "jazzy"
->>>>>>> 9ead486 (Remove iron workflow and update readme (#434))
