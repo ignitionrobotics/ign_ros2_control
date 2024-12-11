@@ -1,0 +1,270 @@
+<?xml version="1.0"?>
+<robot name="mecanum_vehicle" xmlns:xacro="http://www.ros.org/wiki/xacro" xmlns:gz="http://gazebosim.org/schema">
+  <material name="orange">
+    <color rgba="0.8 0.4 0.0 1.0"/>
+  </material>
+  <material name="black">
+    <color rgba="0 0 0 1.0"/>
+  </material>
+  <material name="white">
+    <color rgba="1 1 1 1.0"/>
+  </material>
+
+  <!-- Base Link -->
+  <link name="base_link">
+    <collision>
+      <origin xyz="0 0 0.5" rpy="0 0 0"/>
+      <geometry>
+        <box size="2 1 0.5"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="0 0 0.5" rpy="0 0 0"/>
+      <geometry>
+        <box size="2 1 0.5"/>
+      </geometry>
+      <material name="orange"/>
+    </visual>
+    <inertial>
+      <origin xyz="0 -0 0.5" rpy="0 0 0"/>
+      <mass value="1.5"/>
+      <inertia
+        ixx="0.13"
+        ixy="0.0"
+        ixz="0.0"
+        iyy="0.42"
+        iyz="0.0"
+        izz="0.48"/>
+    </inertial>
+  </link>
+
+  <!-- front left wheel -->
+  <joint name="front_left_wheel_joint" type="continuous">
+    <origin xyz="0.6 0.5 0.3" rpy="-${pi/2} 0 0"/>
+    <parent link="base_link"/>
+    <child link="front_left_wheel"/>
+    <axis xyz="0 0 1"/>
+    <dynamics damping="0.2"/>
+  </joint>
+  <link name="front_left_wheel">
+    <collision>
+      <geometry>
+        <sphere radius="0.3"/>
+      </geometry>
+    </collision>
+    <visual>
+      <geometry>
+        <sphere radius="0.3"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+    <inertial>
+      <mass value="2"/>
+      <inertia ixx="0.145"
+               ixy="0.0"
+               ixz="0.0"
+               iyy="0.145"
+               iyz="0.0"
+               izz="0.125"/>
+    </inertial>
+  </link>
+
+  <!-- front right wheel -->
+  <joint name="front_right_wheel_joint" type="continuous">
+    <origin xyz="0.6 -0.5 0.3" rpy="-${pi/2} 0 0"/>
+    <parent link="base_link"/>
+    <child link="front_right_wheel"/>
+    <axis xyz="0 0 1"/>
+    <dynamics damping="0.2"/>
+  </joint>
+  <link name="front_right_wheel">
+    <collision>
+      <geometry>
+        <sphere radius="0.3"/>
+      </geometry>
+    </collision>
+    <visual>
+      <geometry>
+        <sphere radius="0.3"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+    <inertial>
+      <mass value="2"/>
+      <inertia ixx="0.145"
+               ixy="0.0"
+               ixz="0.0"
+               iyy="0.145"
+               iyz="0.0"
+               izz="0.125"/>
+      </inertial>
+  </link>
+
+  <!-- rear left wheel -->
+  <joint name="rear_left_wheel_joint" type="continuous">
+    <origin xyz="-0.6 0.5 0.3" rpy="-${pi/2} 0 0"/>
+    <parent link="base_link"/>
+    <child link="rear_left_wheel"/>
+    <axis xyz="0 0 1"/>
+    <dynamics damping="0.2"/>
+  </joint>
+  <link name="rear_left_wheel">
+    <collision>
+      <geometry>
+        <sphere radius="0.3"/>
+      </geometry>
+    </collision>
+    <visual>
+      <geometry>
+        <sphere radius="0.3"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+    <inertial>
+      <mass value="2"/>
+      <inertia ixx="0.145"
+               ixy="0.0"
+               ixz="0.0"
+               iyy="0.145"
+               iyz="0.0"
+               izz="0.125"/>
+    </inertial>
+  </link>
+
+  <!-- rear right wheel -->
+  <joint name="rear_right_wheel_joint" type="continuous">
+    <origin xyz="-0.6 -0.5 0.3" rpy="-${pi/2} 0 0"/>
+    <parent link="base_link"/>
+    <child link="rear_right_wheel"/>
+    <axis xyz="0 0 1"/>
+    <dynamics damping="0.2"/>
+  </joint>
+  <link name="rear_right_wheel">
+    <collision>
+      <geometry>
+        <sphere radius="0.3"/>
+      </geometry>
+    </collision>
+    <visual>
+      <geometry>
+        <sphere radius="0.3"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+    <inertial>
+      <mass value="2"/>
+      <inertia ixx="0.145"
+               ixy="0.0"
+               ixz="0.0"
+               iyy="0.145"
+               iyz="0.0"
+               izz="0.125"/>
+      </inertial>
+  </link>
+
+  <!-- To emulate Mecanum wheels in Gazebo with spherical collisions it
+  requires a custom friction model so the vehicle can strafe left to right -->
+  <gazebo reference='front_left_wheel'>
+    <collision>
+      <surface>
+        <friction>
+          <ode>
+            <mu>1.0</mu>
+            <mu2>0.0</mu2>
+            <fdir1 gz:expressed_in="base_link">1 -1 0</fdir1>
+          </ode>
+        </friction>
+      </surface>
+    </collision>
+  </gazebo>
+  <gazebo reference='front_right_wheel'>
+    <collision>
+      <surface>
+        <friction>
+          <ode>
+            <mu>1.0</mu>
+            <mu2>0.0</mu2>
+            <fdir1 gz:expressed_in="base_link">1 1 0</fdir1>
+          </ode>
+        </friction>
+      </surface>
+    </collision>
+  </gazebo>
+  <gazebo reference='rear_left_wheel'>
+    <collision>
+      <surface>
+        <friction>
+          <ode>
+            <mu>1.0</mu>
+            <mu2>0.0</mu2>
+            <fdir1 gz:expressed_in="base_link">1 1 0</fdir1>
+          </ode>
+        </friction>
+      </surface>
+    </collision>
+  </gazebo>
+  <gazebo reference='rear_right_wheel'>
+    <collision>
+      <surface>
+        <friction>
+          <ode>
+            <mu>1.0</mu>
+            <mu2>0.0</mu2>
+            <fdir1 gz:expressed_in="base_link">1 -1 0</fdir1>
+          </ode>
+        </friction>
+      </surface>
+    </collision>
+  </gazebo>
+
+  <!-- Define the vehicles hardware, command and state interfaces -->
+  <ros2_control name="GazeboSimSystem" type="system">
+    <hardware>
+      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+    </hardware>
+    <joint name="front_left_wheel_joint">
+      <command_interface name="velocity">
+        <param name="min">-1</param>
+        <param name="max">1</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="front_right_wheel_joint">
+      <command_interface name="velocity">
+        <param name="min">-1</param>
+        <param name="max">1</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="rear_left_wheel_joint">
+      <command_interface name="velocity">
+        <param name="min">-1</param>
+        <param name="max">1</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="rear_right_wheel_joint">
+      <command_interface name="velocity">
+        <param name="min">-1</param>
+        <param name="max">1</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+
+  <!-- ROS2 Control plugin and topic re-mapping -->
+  <gazebo>
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(find gz_ros2_control_demos)/config/mecanum_drive_controller.yaml</parameters>
+      <ros>
+        <remapping>/mecanum_drive_controller/reference:=/cmd_vel</remapping>
+        <remapping>/mecanum_drive_controller/odom:=/odom</remapping>
+      </ros>
+    </plugin>
+  </gazebo>
+
+</robot>

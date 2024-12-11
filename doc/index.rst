@@ -280,6 +280,13 @@ When the Gazebo world is launched you can run some of the following commands to 
   ros2 run gz_ros2_control_demos example_tricycle_drive
   ros2 run gz_ros2_control_demos example_ackermann_drive
 
+To run the Mecanum mobile robot run the following commands to drive it from the keyboard:
+
+.. code-block:: shell
+
+  ros2 launch gz_ros2_control_demos mecanum_drive_example.launch.py
+  ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -p stamped:=true
+
 Gripper
 -----------------------------------------------------------
 
