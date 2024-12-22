@@ -34,8 +34,10 @@ def generate_launch_description():
             ' ',
             PathJoinSubstitution(
                 [FindPackageShare('gz_ros2_control_demos'),
-                 'urdf', 'test_diff_drive_namespaced.xacro.urdf']
+                 'urdf', 'test_diff_drive.xacro.urdf']
             ),
+            ' ',
+            'namespace:=r1',
         ]
     )
     robot_description = {'robot_description': robot_description_content}
@@ -43,7 +45,7 @@ def generate_launch_description():
         [
             FindPackageShare('gz_ros2_control_demos'),
             'config',
-            'diff_drive_controller_velocity.yaml',
+            'diff_drive_controller.yaml',
         ]
     )
 

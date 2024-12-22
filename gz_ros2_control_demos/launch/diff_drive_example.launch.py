@@ -54,7 +54,7 @@ def generate_launch_description():
         [
             FindPackageShare('gz_ros2_control_demos'),
             'config',
-            'diff_drive_controller_velocity.yaml',
+            'diff_drive_controller.yaml',
         ]
     )
 
