@@ -276,6 +276,18 @@ When the Gazebo world is launched you can run some of the following commands to 
   ros2 run ign_ros2_control_demos example_tricycle_drive
   ros2 run ign_ros2_control_demos example_ackermann_drive
 
+To demonstrate the setup of a namespaced robot, run
+
+.. code-block:: shell
+
+  ros2 launch ign_ros2_control_demos diff_drive_example_namespaced.launch.py
+
+which will launch a diff drive robot within the namespace ``r1``.
+
+.. note::
+
+  The ros2_control settings for the controller_manager and the controller defined in ``diff_drive_controller.yaml`` use wildcards to match all namespaces.
+
 Gripper
 -----------------------------------------------------------
 
