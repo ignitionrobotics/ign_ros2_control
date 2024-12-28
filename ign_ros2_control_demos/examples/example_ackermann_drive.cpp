@@ -17,7 +17,7 @@
 
 #include <rclcpp/rclcpp.hpp>
 
-#include <geometry_msgs/msg/twist.hpp>
+#include <geometry_msgs/msg/twist_stamped.hpp>
 
 using namespace std::chrono_literals;
 
@@ -28,22 +28,26 @@ int main(int argc, char * argv[])
   std::shared_ptr<rclcpp::Node> node =
     std::make_shared<rclcpp::Node>("ackermann_drive_test_node");
 
-  auto publisher = node->create_publisher<geometry_msgs::msg::Twist>(
-    "/ackermann_steering_controller/reference_unstamped", 10);
+  auto publisher = node->create_publisher<geometry_msgs::msg::TwistStamped>(
+    "/ackermann_steering_controller/reference", 10);
 
   RCLCPP_INFO(node->get_logger(), "node created");
 
-  geometry_msgs::msg::Twist command;
+  geometry_msgs::msg::Twist tw;
 
-  command.linear.x = 0.5;
-  command.linear.y = 0.0;
-  command.linear.z = 0.0;
+  tw.linear.x = 0.5;
+  tw.linear.y = 0.0;
+  tw.linear.z = 0.0;
 
-  command.angular.x = 0.0;
-  command.angular.y = 0.0;
-  command.angular.z = 0.3;
+  tw.angular.x = 0.0;
+  tw.angular.y = 0.0;
+  tw.angular.z = 0.3;
+
+  geometry_msgs::msg::TwistStamped command;
+  command.twist = tw;
 
   while (1) {
+    command.header.stamp = node->now();
     publisher->publish(command);
     std::this_thread::sleep_for(50ms);
     rclcpp::spin_some(node);

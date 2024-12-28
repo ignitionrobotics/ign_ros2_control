@@ -20,6 +20,7 @@ ackermann_steering_controller:
     reference_timeout: 2.0
     rear_wheels_names: ['rear_left_wheel_joint', 'rear_right_wheel_joint']
     front_wheels_names: ['left_wheel_steering_joint', 'right_wheel_steering_joint']
+    use_stamped_vel: true
     open_loop: false
     velocity_rolling_window_size: 10
     base_frame_id: base_link
