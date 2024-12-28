@@ -96,7 +96,6 @@ def generate_launch_description():
                 on_exit=[load_ackermann_controller],
             )
         ),
-        bridge,
         node_robot_state_publisher,
         gz_spawn_entity,
         # Launch Arguments
