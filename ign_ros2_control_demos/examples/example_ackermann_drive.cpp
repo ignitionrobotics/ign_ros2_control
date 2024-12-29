@@ -28,6 +28,8 @@ int main(int argc, char * argv[])
   std::shared_ptr<rclcpp::Node> node =
     std::make_shared<rclcpp::Node>("ackermann_drive_test_node");
 
+  node->set_parameter(rclcpp::Parameter("use_sim_time", true));
+
   auto publisher = node->create_publisher<geometry_msgs::msg::TwistStamped>(
     "/ackermann_steering_controller/reference", 10);
 
@@ -47,10 +49,12 @@ int main(int argc, char * argv[])
   command.twist = tw;
 
   while (1) {
-    command.header.stamp = node->now();
-    publisher->publish(command);
-    std::this_thread::sleep_for(50ms);
     rclcpp::spin_some(node);
+    if (node->get_clock()->started()) {
+      command.header.stamp = node->now();
+      publisher->publish(command);
+    }
+    std::this_thread::sleep_for(50ms);
   }
   rclcpp::shutdown();
 
