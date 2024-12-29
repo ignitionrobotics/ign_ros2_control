@@ -34,8 +34,8 @@
 
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0" />
-      <mass value="1" />
-      <inertia ixx="0.126164" ixy="0.0" ixz="0.0" iyy="0.416519" iyz="0.0" izz="0.481014" />
+      <mass value="100" />
+      <inertia ixx="10.4" ixy="0.0" ixz="0.0" iyy="35.4" iyz="0.0" izz="41.66" />
     </inertial>
   </link>
 
@@ -60,8 +60,8 @@
     </visual>
 
     <inertial>
-      <mass value="2" />
-      <inertia ixx="0.145833" ixy="0.0" ixz="0.0" iyy="0.145833" iyz="0.0" izz="0.125" />
+      <mass value="11.3" />
+      <inertia ixx="0.26" ixy="0.0" ixz="0.0" iyy="0.26" iyz="0.0" izz="0.51" />
     </inertial>
   </link>
 
@@ -87,8 +87,8 @@
       <material name="Black" />
     </visual>
     <inertial>
-      <mass value="2" />
-      <inertia ixx="0.145833" ixy="0.0" ixz="0.0" iyy="0.145833" iyz="0.0" izz="0.125" />
+      <mass value="11.3" />
+      <inertia ixx="0.26" ixy="0.0" ixz="0.0" iyy="0.26" iyz="0.0" izz="0.51" />
     </inertial>
   </link>
 
@@ -108,12 +108,13 @@
     </inertial>
   </link>
 
-  <joint name="left_wheel_steering_joint" type="continuous">
-    <origin xyz="0.9 0.5 -0.2" rpy="-1.57 0 0" />
+  <joint name="left_wheel_steering_joint" type="revolute">
+    <origin xyz="0.9 -0.5 -0.2" rpy="1.57 0 0" />
     <parent link="chassis" />
     <child link="left_wheel_steering" />
     <axis xyz="0 1 0" />
     <dynamics damping="0.2" />
+    <limit effort="1000.0" lower="-1.57" upper="1.57" velocity="30"/>
   </joint>
 
   <!-- right steer Link -->
@@ -124,12 +125,13 @@
     </inertial>
   </link>
 
-  <joint name="right_wheel_steering_joint" type="continuous">
-    <origin xyz="0.9 -0.5 -0.2" rpy="-1.57 0 0" />
+  <joint name="right_wheel_steering_joint" type="revolute">
+    <origin xyz="0.9 0.5 -0.2" rpy="1.57 0 0" />
     <parent link="chassis" />
     <child link="right_wheel_steering" />
     <axis xyz="0 1 0" />
     <dynamics damping="0.2" />
+    <limit effort="1000.0" lower="-1.57" upper="1.57" velocity="30"/>
   </joint>
 
   <!-- front left wheel Link -->
@@ -146,8 +148,8 @@
       <material name="Black" />
     </visual>
     <inertial>
-      <mass value="2" />
-      <inertia ixx="0.145833" ixy="0.0" ixz="0.0" iyy="0.145833" iyz="0.0" izz="0.125" />
+      <mass value="11.3" />
+      <inertia ixx="0.26" ixy="0.0" ixz="0.0" iyy="0.26" iyz="0.0" izz="0.51" />
     </inertial>
   </link>
 
@@ -173,8 +175,8 @@
       <material name="Black" />
     </visual>
     <inertial>
-      <mass value="2" />
-      <inertia ixx="0.145833" ixy="0.0" ixz="0.0" iyy="0.145833" iyz="0.0" izz="0.125" />
+      <mass value="11.3" />
+      <inertia ixx="0.26" ixy="0.0" ixz="0.0" iyy="0.26" iyz="0.0" izz="0.51" />
     </inertial>
   </link>
 
