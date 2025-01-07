@@ -2,6 +2,11 @@
 Changelog for package gz_ros2_control_tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.0.3 (2024-12-11)
+------------------
+* Add missing bridge for simulation time (`#443 <https://github.com/ros-controls/gz_ros2_control/issues/443>`_)
+* Contributors: Christoph Fröhlich
+
 2.0.2 (2024-10-28)
 ------------------
 

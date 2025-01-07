@@ -61,13 +61,13 @@ To run the demo
     ros2 run gz_ros2_control_demos example_position
 
 
-Add ros2_control tag to a URDF
+Add ros2_control tag to a URDF or SDF
 ==========================================
 
 Simple setup
 -----------------------------------------------------------
 
-To use *ros2_control* with your robot, you need to add some additional elements to your URDF.
+To use *ros2_control* with your robot, you need to add some additional elements to your URDF or SDF.
 You should include the tag ``<ros2_control>`` to access and control the robot interfaces. We should
 include:
 
@@ -96,7 +96,7 @@ include:
 Using mimic joints in simulation
 -----------------------------------------------------------
 
-To use ``mimic`` joints in *gz_ros2_control* you should define its parameters in your URDF, i.e, set the ``<mimic>`` tag to the mimicked joint (see the `URDF specification <https://wiki.ros.org/urdf/XML/joint>`__)
+To use ``mimic`` joints in *gz_ros2_control* you should define its parameters in your URDF or SDF, i.e, set the ``<mimic>`` tag to the mimicked joint (see the `URDF specification <https://wiki.ros.org/urdf/XML/joint>`__ or the `SDF specification <http://sdformat.org/spec?ver=1.11&elem=joint#axis_mimic>`__)
 
 .. code-block:: xml
 
@@ -122,11 +122,13 @@ The mimic joint must not have command interfaces configured in the ``<ros2_contr
 Add the gz_ros2_control plugin
 ==========================================
 
-In addition to the *ros2_control* tags, a Gazebo plugin needs to be added to your URDF that
+In addition to the *ros2_control* tags, a Gazebo plugin needs to be added to your URDF or SDF that
 actually parses the *ros2_control* tags and loads the appropriate hardware interfaces and
 controller manager. By default the *gz_ros2_control* plugin is very simple, though it is also
 extensible via an additional plugin architecture to allow power users to create their own custom
 robot hardware interfaces between *ros2_control* and Gazebo.
+
+URDF:
 
 .. code-block:: xml
 
@@ -136,12 +138,20 @@ robot hardware interfaces between *ros2_control* and Gazebo.
     </plugin>
   </gazebo>
 
+SDF:
+
+.. code-block:: xml
+
+  <plugin filename="libgz_ros2_control-system.so" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+    <parameters>$(find gz_ros2_control_demos)/config/cart_controller.yaml</parameters>
+  </plugin>
+
 The *gz_ros2_control* ``<plugin>`` tag also has the following optional child elements:
 
 * ``<parameters>``: A YAML file with the configuration of the controllers. This element can be given multiple times to load multiple files.
 * ``<controller_manager_name>``: Set controller manager name (default: ``controller_manager``)
 
-The following additional parameters can be set via child elements in the URDF or via ROS parameters in the YAML file above:
+The following additional parameters can be set via child elements in the URDF/SDF or via ROS parameters in the YAML file above:
 
 * ``<hold_joints>``: if set to true (default), it will hold the joints' position if their interface was not claimed, e.g., the controller hasn't been activated yet.
 * ``<position_proportional_gain>``: Set the proportional gain. (default: 0.1) This determines the setpoint for a position-controlled joint ``joint_velocity = joint_position_error * position_proportional_gain``.
@@ -157,6 +167,8 @@ or via ROS parameters:
 
 Additionally, one can specify a namespace and remapping rules, which will be forwarded to the controller_manager and loaded controllers. Add the following ``<ros>`` section:
 
+URDF:
+
 .. code-block:: xml
 
   <gazebo>
@@ -169,10 +181,22 @@ Additionally, one can specify a namespace and remapping rules, which will be for
     </plugin>
   </gazebo>
 
+SDF:
+
+.. code-block:: xml
+
+  <plugin filename="libgz_ros2_control-system.so" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+    ...
+    <ros>
+      <namespace>my_namespace</namespace>
+      <remapping>/robot_description:=/robot_description_full</remapping>
+    </ros>
+  </plugin>
+
 Default gz_ros2_control Behavior
 -----------------------------------------------------------
 
-By default, without a ``<plugin>`` tag, *gz_ros2_control* will attempt to get all of the information it needs to interface with a ros2_control-based controller out of the URDF. This is sufficient for most cases, and good for at least getting started.
+By default, without a ``<plugin>`` tag, *gz_ros2_control* will attempt to get all of the information it needs to interface with a ros2_control-based controller out of the URDF or SDF. This is sufficient for most cases, and good for at least getting started.
 
 The default behavior provides the following ros2_control interfaces:
 
@@ -188,8 +212,10 @@ The *gz_ros2_control* Gazebo plugin also provides a pluginlib-based interface to
 These plugins must inherit the ``gz_ros2_control::GazeboSimSystemInterface``, which implements a simulated *ros2_control*
 ``hardware_interface::SystemInterface``. SystemInterface provides API-level access to read and command joint properties.
 
-The respective GazeboSimSystemInterface sub-class is specified in a URDF model and is loaded when the
+The respective GazeboSimSystemInterface sub-class is specified in a URDF or SDF model and is loaded when the
 robot model is loaded. For example, the following XML will load the default plugin:
+
+URDF:
 
 .. code-block:: xml
 
@@ -205,11 +231,27 @@ robot model is loaded. For example, the following XML will load the default plug
     </plugin>
   </gazebo>
 
+SDF:
+
+.. code-block:: xml
+
+  <ros2_control name="GazeboSimSystem" type="system">
+    <hardware>
+      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+    </hardware>
+    ...
+  <ros2_control>
+  <plugin name="gz_ros2_control::GazeboSimROS2ControlPlugin" filename="libgz_ros2_control-system">
+    ...
+  </plugin>
+
 Set up controllers
 -----------------------------------------------------------
 
 Use the tag ``<parameters>`` inside ``<plugin>`` to set the YAML file with the controller configuration
 and use the tag ``<controller_manager_prefix_node_name>`` to set the controller manager node name.
+
+URDF:
 
 .. code-block:: xml
 
@@ -219,6 +261,15 @@ and use the tag ``<controller_manager_prefix_node_name>`` to set the controller 
       <controller_manager_prefix_node_name>controller_manager</controller_manager_prefix_node_name>
     </plugin>
   <gazebo>
+
+SDF:
+
+.. code-block:: xml
+
+  <plugin name="gz_ros2_control::GazeboSimROS2ControlPlugin" filename="libgz_ros2_control-system">
+    <parameters>$(find gz_ros2_control_demos)/config/cart_controller.yaml</parameters>
+    <controller_manager_prefix_node_name>controller_manager</controller_manager_prefix_node_name>
+  </plugin>
 
 The following is a basic configuration of the controllers:
 
@@ -233,6 +284,11 @@ gz_ros2_control_demos
 ==========================================
 
 There are some examples in the *gz_ros2_control_demos* package.
+To specify whether to use URDF or SDF, you can launch the demo in the following way (the default is URDF):
+
+.. code-block:: shell
+
+  ros2 launch gz_ros2_control_demos <launch file> description_format:=sdf
 
 Cart on rail
 -----------------------------------------------------------
@@ -279,6 +335,25 @@ When the Gazebo world is launched you can run some of the following commands to 
   ros2 run gz_ros2_control_demos example_diff_drive
   ros2 run gz_ros2_control_demos example_tricycle_drive
   ros2 run gz_ros2_control_demos example_ackermann_drive
+
+To demonstrate the setup of a namespaced robot, run
+
+.. code-block:: shell
+
+  ros2 launch gz_ros2_control_demos diff_drive_example_namespaced.launch.py
+
+which will launch a diff drive robot within the namespace ``r1``.
+
+.. note::
+
+  The ros2_control settings for the controller_manager and the controller defined in ``diff_drive_controller.yaml`` use wildcards to match all namespaces.
+
+To run the Mecanum mobile robot run the following commands to drive it from the keyboard:
+
+.. code-block:: shell
+
+  ros2 launch gz_ros2_control_demos mecanum_drive_example.launch.py
+  ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -p stamped:=true
 
 Gripper
 -----------------------------------------------------------

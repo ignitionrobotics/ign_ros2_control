@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="3">
   <name>gz_ros2_control</name>
-  <version>2.0.2</version>
+  <version>2.0.3</version>
   <description>Gazebo ros2_control package allows to control simulated robots using ros2_control framework.</description>
   <maintainer email="alejandro@openrobotics.com">Alejandro Hernández</maintainer>
   <maintainer email="bence.magyar.robotics@gmail.com">Bence Magyar</maintainer>
