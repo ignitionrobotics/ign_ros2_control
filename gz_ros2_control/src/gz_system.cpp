@@ -649,19 +649,9 @@ hardware_interface::return_type GazeboSimSystem::write(
     }
 
     if (this->dataPtr->joints_[i].joint_control_method & VELOCITY) {
-      if (!this->dataPtr->ecm->Component<sim::components::JointVelocityCmd>(
-          this->dataPtr->joints_[i].sim_joint))
-      {
-        this->dataPtr->ecm->CreateComponent(
-          this->dataPtr->joints_[i].sim_joint,
-          sim::components::JointVelocityCmd({0}));
-      } else {
-        const auto jointVelCmd =
-          this->dataPtr->ecm->Component<sim::components::JointVelocityCmd>(
-          this->dataPtr->joints_[i].sim_joint);
-        *jointVelCmd = sim::components::JointVelocityCmd(
-          {this->dataPtr->joints_[i].joint_velocity_cmd});
-      }
+      this->dataPtr->ecm->SetComponentData<sim::components::JointVelocityCmd>(
+        this->dataPtr->joints_[i].sim_joint,
+        {this->dataPtr->joints_[i].joint_velocity_cmd});
     } else if (this->dataPtr->joints_[i].joint_control_method & POSITION) {
       // Get error in position
       double error;
