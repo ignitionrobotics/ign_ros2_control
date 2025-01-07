@@ -437,6 +437,10 @@ void GazeboSimROS2ControlPlugin::Configure(
   // Create the controller manager
   RCLCPP_INFO(this->dataPtr->node_->get_logger(), "Loading controller_manager");
   rclcpp::NodeOptions options = controller_manager::get_cm_node_options();
+  arguments.push_back("-r");
+  arguments.push_back("__node:=" + controllerManagerNodeName);
+  arguments.push_back("-r");
+  arguments.push_back("__ns:=" + ns);
   options.arguments(arguments);
   this->dataPtr->controller_manager_.reset(
     new controller_manager::ControllerManager(
