@@ -381,10 +381,12 @@ void IgnitionROS2ControlPlugin::Configure(
   rcl_ret_t rcl_ret = rcl_parse_arguments(
     static_cast<int>(argv.size()),
     argv.data(), rcl_get_default_allocator(), &rcl_args);
-  auto rcl_context = this->dataPtr->node_->get_node_base_interface()->get_context()->get_rcl_context();
+  auto rcl_context = 
+    this->dataPtr->node_->get_node_base_interface()->get_context()->get_rcl_context();
   rcl_context->global_arguments = rcl_args;
   if (rcl_ret != RCL_RET_OK) {
-    RCLCPP_ERROR_STREAM(this->dataPtr->node_->get_logger(), "Argument parser error:" << rcl_get_error_string().str);
+    RCLCPP_ERROR_STREAM(
+      this->dataPtr->node_->get_logger(), "Argument parser error:" << rcl_get_error_string().str);
     rcl_reset_error();
     return;
   }
