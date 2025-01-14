@@ -38,9 +38,9 @@ int main(int argc, char * argv[])
   command.linear.y = 0.0;
   command.linear.z = 0.0;
 
-  command.angular.x = 0.1;
+  command.angular.x = 0.0;
   command.angular.y = 0.0;
-  command.angular.z = 0.0;
+  command.angular.z = 0.1;
 
   while (1) {
     publisher->publish(command);
