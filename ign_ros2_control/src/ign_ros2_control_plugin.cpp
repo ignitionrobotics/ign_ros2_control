@@ -73,6 +73,9 @@ public:
   /// \brief Thread where the executor will spin
   std::thread thread_executor_spin_;
 
+  /// \brief Context for the executor
+  rclcpp::Context::SharedPtr context_;
+
   /// \brief Executor to spin the controller
   rclcpp::executors::MultiThreadedExecutor::SharedPtr executor_;
 
@@ -293,11 +296,14 @@ void IgnitionROS2ControlPlugin::Configure(
 
   auto sdfPtr = const_cast<sdf::Element *>(_sdf.get());
 
+  std::vector<std::string> parameter_file_names;
+
   sdf::ElementPtr argument_sdf = sdfPtr->GetElement("parameters");
   while (argument_sdf) {
     std::string argument = argument_sdf->Get<std::string>();
     arguments.push_back(RCL_PARAM_FILE_FLAG);
     arguments.push_back(argument);
+    parameter_file_names.push_back(argument);
     argument_sdf = argument_sdf->GetNextElement("parameters");
   }
 
@@ -339,19 +345,42 @@ void IgnitionROS2ControlPlugin::Configure(
   }
 
   std::vector<const char *> argv;
-  for (const auto & arg : arguments) {
-    argv.push_back(reinterpret_cast<const char *>(arg.data()));
-  }
+  // for (const auto & arg : arguments) {
+  //   RCLCPP_INFO(
+  //     logger,
+  //     arg.data()
+  //   );
+  //   argv.push_back(reinterpret_cast<const char *>(arg.data()));
+  // }
 
   // Create a default context, if not already
   if (!rclcpp::ok()) {
     rclcpp::init(static_cast<int>(argv.size()), argv.data());
   }
 
+  // Create individual context
+  std::string msg = ns + " [gz_ros2_control]: rclcpp:init called";
+  RCLCPP_INFO(
+    logger,
+    msg.data()
+  );
+
+  // this->dataPtr->context_ = std::make_shared<rclcpp::Context>();
+  // this->dataPtr->context_->init(static_cast<int>(argv.size()), argv.data());
+
+  this->dataPtr->context_ = rclcpp::contexts::get_global_default_context();
+
   std::string node_name = "gz_ros2_control";
 
-  this->dataPtr->node_ = rclcpp::Node::make_shared(node_name, ns);
-  this->dataPtr->executor_ = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();
+  rclcpp::ExecutorOptions executor_options;
+  executor_options.context = this->dataPtr->context_;
+
+  rclcpp::NodeOptions node_options;
+  node_options.context(this->dataPtr->context_);
+  node_options.arguments(arguments);
+
+  this->dataPtr->node_ = rclcpp::Node::make_shared(node_name, ns, node_options);
+  this->dataPtr->executor_ = std::make_shared<rclcpp::executors::MultiThreadedExecutor>(executor_options);
   this->dataPtr->executor_->add_node(this->dataPtr->node_);
   auto spin = [this]()
     {
@@ -451,6 +480,10 @@ void IgnitionROS2ControlPlugin::Configure(
     resource_manager_->set_component_state(control_hardware_info[i].name, state);
   }
 
+  rclcpp::NodeOptions cm_node_options = controller_manager::get_cm_node_options();
+  cm_node_options.context(this->dataPtr->context_);
+  cm_node_options.arguments(arguments);
+
   // Create the controller manager
   RCLCPP_INFO(this->dataPtr->node_->get_logger(), "Loading controller_manager");
   this->dataPtr->controller_manager_.reset(
@@ -458,8 +491,35 @@ void IgnitionROS2ControlPlugin::Configure(
       std::move(resource_manager_),
       this->dataPtr->executor_,
       controllerManagerNodeName,
-      this->dataPtr->node_->get_namespace()));
+      this->dataPtr->node_->get_namespace(),
+      cm_node_options
+    )
+      
+    );
   this->dataPtr->executor_->add_node(this->dataPtr->controller_manager_);
+
+  auto parameters_client =  std::make_shared<rclcpp::AsyncParametersClient>(
+    this->dataPtr->controller_manager_, controllerManagerNodeName
+  );
+
+  for (const std::string& parameter_file_name : parameter_file_names)
+  {
+    RCLCPP_INFO(
+      this->dataPtr->controller_manager_->get_logger(),
+      "Trying to load file: "
+    );
+
+    RCLCPP_INFO(
+      this->dataPtr->controller_manager_->get_logger(),
+      parameter_file_name.data()
+    );
+    auto parameter_map = rclcpp::parameter_map_from_yaml_file(parameter_file_name);
+
+
+    // parameters_client->load_parameters(parameter_map);
+    // parameters_client->load_parameters(parameter_file_name).wait();
+  }
+
 
   if (!this->dataPtr->controller_manager_->has_parameter("update_rate")) {
     RCLCPP_ERROR_STREAM(
