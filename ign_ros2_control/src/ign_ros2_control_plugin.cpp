@@ -338,18 +338,14 @@ void IgnitionROS2ControlPlugin::Configure(
     }
   }
 
-  std::vector<const char *> argv;
-  for (const auto & arg : arguments) {
-    argv.push_back(reinterpret_cast<const char *>(arg.data()));
-  }
-
   // Create a default context, if not already
   if (!rclcpp::ok()) {
+    RCLCPP_DEBUG_STREAM(logger, "Create default context");
+    std::vector<const char *> argv;
     rclcpp::init(static_cast<int>(argv.size()), argv.data());
   }
 
   std::string node_name = "gz_ros2_control";
-
   this->dataPtr->node_ = rclcpp::Node::make_shared(node_name, ns);
   this->dataPtr->executor_ = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();
   this->dataPtr->executor_->add_node(this->dataPtr->node_);
@@ -358,6 +354,46 @@ void IgnitionROS2ControlPlugin::Configure(
       this->dataPtr->executor_->spin();
     };
   this->dataPtr->thread_executor_spin_ = std::thread(spin);
+
+  RCLCPP_DEBUG_STREAM(logger, "Create node " << node_name);
+
+  // Read urdf from ros parameter server
+  std::string urdf_string;
+  urdf_string = this->dataPtr->getURDF();
+  if (urdf_string.empty()) {
+    RCLCPP_ERROR_STREAM(this->dataPtr->node_->get_logger(), "An empty URDF was passed. Exiting.");
+    return;
+  }
+
+  // set the robot description as argument
+  // to propagate it among controller manager and controllers
+  std::string rb_arg = std::string("robot_description:=") + urdf_string;
+  arguments.push_back(RCL_PARAM_FLAG);
+  arguments.push_back(rb_arg);
+
+  std::vector<const char *> argv;
+  for (const auto & arg : arguments) {
+    argv.push_back(reinterpret_cast<const char *>(arg.data()));
+  }
+
+  // set the arguments into rcl context
+  rcl_arguments_t rcl_args = rcl_get_zero_initialized_arguments();
+  rcl_ret_t rcl_ret = rcl_parse_arguments(
+    static_cast<int>(argv.size()),
+    argv.data(), rcl_get_default_allocator(), &rcl_args);
+  auto rcl_context = 
+    this->dataPtr->node_->get_node_base_interface()->get_context()->get_rcl_context();
+  rcl_context->global_arguments = rcl_args;
+  if (rcl_ret != RCL_RET_OK) {
+    RCLCPP_ERROR_STREAM(
+      this->dataPtr->node_->get_logger(), "Argument parser error:" << rcl_get_error_string().str);
+    rcl_reset_error();
+    return;
+  }
+  if (rcl_arguments_get_param_files_count(&rcl_args) < 1) {
+    RCLCPP_ERROR(this->dataPtr->node_->get_logger(), "Failed to parse input yaml file(s)");
+    return;
+  }
 
   RCLCPP_DEBUG_STREAM(
     this->dataPtr->node_->get_logger(), "[Ignition ROS 2 Control] Setting up controller for [" <<
@@ -378,10 +414,8 @@ void IgnitionROS2ControlPlugin::Configure(
   // Read urdf from ros parameter server then
   // setup actuators and mechanism control node.
   // This call will block if ROS is not properly initialized.
-  std::string urdf_string;
   std::vector<hardware_interface::HardwareInfo> control_hardware_info;
   try {
-    urdf_string = this->dataPtr->getURDF();
     control_hardware_info = hardware_interface::parse_control_resources_from_urdf(urdf_string);
   } catch (const std::runtime_error & ex) {
     RCLCPP_ERROR_STREAM(
